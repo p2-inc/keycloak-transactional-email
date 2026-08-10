@@ -15,6 +15,15 @@ Every template receives these variables regardless of email type.
 | `userFirstName` | User first name                                                       |
 | `userLastName`  | User last name                                                        |
 | `username`      | Keycloak username                                                     |
+| `locale`        | Recipient locale as a BCP 47 language tag, e.g. `de` or `pt-BR`       |
+
+`locale` is resolved the same way Keycloak resolves it for FreeMarker templates — the user's locale, the `Accept-Language` header unless `IGNORE_ACCEPT_LANGUAGE_HEADER` is set, then the realm default. It is omitted when no locale can be resolved at all.
+
+Use it to pick a translation in the provider's template, for example in SendGrid's Handlebars syntax:
+
+```handlebars
+{{#equals locale "de"}}Passwort zurücksetzen{{else}}Reset your password{{/equals}}
+```
 
 ---
 

@@ -88,7 +88,12 @@ All endpoints require a valid Bearer token. GET requires `view-realm`; PUT/DELET
 ## Template Variables
 
 Every template receives base variables automatically:
-`realmName`, `userEmail`, `userFirstName`, `userLastName`, `username`
+`realmName`, `userEmail`, `userFirstName`, `userLastName`, `username`, `locale`
+
+`locale` is a BCP 47 language tag, resolved through `KeycloakContext.resolveLocale` — the same call
+`FreeMarkerEmailTemplateProvider.processTemplate` uses, so both paths agree on the recipient's
+language. It is a language tag rather than the `Locale` object FreeMarker gets, because providers
+serialise the variable map to JSON and `Locale.toString()` produces the legacy `de_DE` form.
 
 Per-type additional variables are listed in `KnownEmailTemplate` enum and returned by `GET /templates`.
 

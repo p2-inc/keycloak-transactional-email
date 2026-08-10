@@ -3,6 +3,7 @@ package io.phasetwo.keycloak.transactional.template;
 import io.phasetwo.keycloak.transactional.spi.TransactionalEmailProvider;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import lombok.extern.jbosslog.JBossLog;
 import org.keycloak.email.EmailException;
 import org.keycloak.email.freemarker.FreeMarkerEmailTemplateProvider;
 import org.keycloak.events.Event;
+import org.keycloak.models.Constants;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.OrganizationModel;
 
@@ -225,7 +227,40 @@ public class TransactionalEmailTemplateProvider extends FreeMarkerEmailTemplateP
       vars.put("userLastName", user.getLastName());
       vars.put("username", user.getUsername());
     }
+    resolveLocale().ifPresent(locale -> vars.put("locale", locale));
     return vars;
+  }
+
+  /**
+   * The recipient's locale as a BCP 47 language tag, e.g. {@code "de"} or {@code "pt-BR"}.
+   *
+   * <p>Resolved exactly the way {@link FreeMarkerEmailTemplateProvider#processTemplate} resolves
+   * it — through {@code KeycloakContext.resolveLocale}, honouring {@link
+   * Constants#IGNORE_ACCEPT_LANGUAGE_HEADER} — because the FreeMarker path already puts a {@code
+   * locale} into its template attributes. Without this, moving one email type to a transactional
+   * provider silently drops a variable the same template had before the move, and a provider-side
+   * template has no other way to pick a translation.
+   *
+   * <p>A language tag rather than the {@link Locale} object FreeMarker receives: providers
+   * serialise this map to JSON, and {@code Locale.toString()} yields the legacy {@code de_DE} form
+   * rather than the {@code de-DE} every API here expects.
+   */
+  private Optional<String> resolveLocale() {
+    try {
+      Locale locale =
+          session
+              .getContext()
+              .resolveLocale(
+                  user,
+                  Boolean.parseBoolean(
+                      String.valueOf(attributes.get(Constants.IGNORE_ACCEPT_LANGUAGE_HEADER))));
+      return Optional.ofNullable(locale).map(Locale::toLanguageTag);
+    } catch (Exception e) {
+      // Never fail a send over a missing translation: the mail itself still carries the link the
+      // user is waiting for, and a provider template without `locale` renders its default.
+      log.debugf(e, "Could not resolve recipient locale; sending without it");
+      return Optional.empty();
+    }
   }
 
   private static String formatExpiration(long minutes) {

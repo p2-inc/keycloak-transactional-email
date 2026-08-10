@@ -78,13 +78,14 @@ See **[docs/template-variables.md](docs/template-variables.md)** for the full li
 
 Every template receives a base set of variables:
 
-| Variable        | Description             |
-| --------------- | ----------------------- |
-| `realmName`     | Realm display name      |
-| `userEmail`     | Recipient email address |
-| `userFirstName` | User first name         |
-| `userLastName`  | User last name          |
-| `username`      | Keycloak username       |
+| Variable        | Description                                            |
+| --------------- | ------------------------------------------------------ |
+| `realmName`     | Realm display name                                     |
+| `userEmail`     | Recipient email address                                |
+| `userFirstName` | User first name                                        |
+| `userLastName`  | User last name                                         |
+| `username`      | Keycloak username                                      |
+| `locale`        | Recipient locale as a BCP 47 tag, e.g. `de` or `pt-BR` |
 
 ---
 
