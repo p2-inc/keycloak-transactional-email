@@ -4,7 +4,7 @@
   <groupId>io.phasetwo.keycloak</groupId>
   <artifactId>keycloak-transactional-email</artifactId>
   <packaging>jar</packaging>
-  <version>0.10-SNAPSHOT</version>
+  <version>0.10</version>
 
   <name>Phase Two Keycloak Transactional Email</name>
   <description>Routes Keycloak email sends to external transactional email providers (SendGrid, Brevo, Mailtrap, etc.) using provider-managed dynamic templates.</description>
@@ -47,7 +47,7 @@
   <scm>
     <url>https://github.com/p2-inc/keycloak-transactional-email</url>
     <connection>scm:git:git@github.com:p2-inc/keycloak-transactional-email.git</connection>
-    <tag>HEAD</tag>
+    <tag>v0.10</tag>
   </scm>
 
   <build>
