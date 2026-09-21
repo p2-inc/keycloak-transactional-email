@@ -48,7 +48,7 @@ cp target/keycloak-transactional-email-*.jar /opt/keycloak/providers/
 
 ## Configuration
 
-All configuration is stored as realm attributes. You can manage it through the Keycloak Admin UI or the REST API — see **[docs/configuration.md](docs/configuration.md)** for the full reference, including a step-by-step UI walkthrough.
+All configuration is stored as realm attributes, managed either via this extension's REST API or from the Admin Console when you run the Phase Two Keycloak image (whose `phasetwo-ui` admin theme has a realm-attributes page) — see **[docs/configuration.md](docs/configuration.md)** for the full reference.
 
 Quick example via the REST API:
 
@@ -69,6 +69,10 @@ curl -X PUT "$KC/realms/myrealm/ext-email-template/config" \
 ```
 
 Set `provider` to `""` or `null` to disable transactional routing and revert to SMTP.
+
+Each email type also supports locale-specific template overrides (e.g. `password-reset.nl`), resolved from the recipient's own stored locale (a region-qualified one like `nl-NL` falling back to its language first), then the realm's default locale, then the locale-less mapping. Whichever tier wins also fixes the locale the rest of that email is rendered in - sender name, formatted dates, action names - so a body and the variables this extension resolves for it can't end up in different languages. See [docs/configuration.md#locale-specific-templates](docs/configuration.md#locale-specific-templates).
+
+The sender display name can likewise be overridden globally per locale, per email type, or both at once, since Keycloak's own realm-wide SMTP "From display name" setting has no notion of either - see [docs/configuration.md#locale-specific-sender-identity](docs/configuration.md#locale-specific-sender-identity).
 
 ---
 
