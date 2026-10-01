@@ -31,7 +31,7 @@ public abstract class AbstractTransactionalEmailTest {
 
   static final String KEYCLOAK_IMAGE =
       String.format(
-          "quay.io/phasetwo/keycloak-crdb:%s", System.getProperty("keycloak-version", "26.5.7"));
+          "quay.io/phasetwo/keycloak-crdb:%s", System.getProperty("keycloak-version", "26.8.0"));
   static final String ADMIN_CLI = "admin-cli";
   static final String MASTER = "master";
 
